@@ -1,2 +1,0 @@
-C:\Users\Giuseppe\Desktop\libcloud
-https://github.com/apache/libcloud.git
