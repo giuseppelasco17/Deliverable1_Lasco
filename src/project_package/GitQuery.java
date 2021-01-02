@@ -71,6 +71,7 @@ public class GitQuery {
 	}
 	
 	public void gitClone(String path, String repository) {
+		//clone from a repository in a specific path
 		Process p;
 		try {
 			new File(path).mkdir();
@@ -86,6 +87,7 @@ public class GitQuery {
 	}
 	
 	public void gitPull(String path, String repository) {
+		//pull from a repository in a specific path
 		Process p;
 		try {
 			p = Runtime.getRuntime().exec(CMD + path + " pull " + repository);
