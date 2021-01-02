@@ -13,13 +13,15 @@ public class GitQuery {
 	
 	private static final String EXCEPTION_THROWN = "an exception was thrown";
 	
+	private static final String PROJ_NAME = "\\libcloud";
+	
 	static Logger logger = Logger.getAnonymousLogger();
 
 	public String logFilter(String path, String ticket) {
 		String tkt = null;
 		try {
-			//First line represent the last commit date
-			String pathComplete = path + "\\libcloud";
+			//First line represent the last commit date related to the ticket
+			String pathComplete = path + PROJ_NAME;
 			Process p = Runtime.getRuntime().exec(CMD + pathComplete + " log -1 --pretty=format:\"%cs\" --grep=" + ticket);
 			p.waitFor();
 			BufferedReader stdInput = new BufferedReader(new InputStreamReader(p.getInputStream()));
@@ -31,6 +33,41 @@ public class GitQuery {
             System.exit(-1);
 		}
 		return tkt;
+	}
+	
+	public String firstCommit(String path) {
+		String date = null;
+		try {
+			//First line represent the first commit date
+			String pathComplete = path + PROJ_NAME;
+			Process p = Runtime.getRuntime().exec(CMD + pathComplete + " log --reverse --pretty=format:%cs");
+			BufferedReader stdInput = new BufferedReader(new InputStreamReader(p.getInputStream()));
+			date = stdInput.readLine();
+		} catch (IOException e) {
+			logger.log(Level.SEVERE, EXCEPTION_THROWN, e);
+            // Restore interrupted state...
+            Thread.currentThread().interrupt();
+            System.exit(-1);
+		}
+		return date;
+	}
+	
+	public String lastCommit(String path) {
+		String date = null;
+		try {
+			//First line represent the last commit date
+			String pathComplete = path + PROJ_NAME;
+			Process p = Runtime.getRuntime().exec(CMD + pathComplete + " log --pretty=format:%cs -1");
+			p.waitFor();
+			BufferedReader stdInput = new BufferedReader(new InputStreamReader(p.getInputStream()));
+			date = stdInput.readLine();
+		} catch (IOException | InterruptedException e) {
+			logger.log(Level.SEVERE, EXCEPTION_THROWN, e);
+            // Restore interrupted state...
+            Thread.currentThread().interrupt();
+            System.exit(-1);
+		}
+		return date;
 	}
 	
 	public void gitClone(String path, String repository) {

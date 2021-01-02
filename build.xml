@@ -3,18 +3,23 @@
               Any modifications will be overwritten.
               To include a user specific buildfile here, simply create one in the same
               directory with the processing instruction <?eclipse.ant.import?>
-              as the first entry and export the buildfile again. --><project basedir="." default="build" name="Milestone1_Lasco">
+              as the first entry and export the buildfile again. --><project basedir="." default="build" name="Deliverable1_Lasco">
     <property environment="env"/>
     <property name="debuglevel" value="source,lines,vars"/>
     <property name="target" value="13"/>
     <property name="source" value="13"/>
-    <path id="Milestone1_Lasco.classpath">
+    <path id="Deliverable1_Lasco.classpath">
         <pathelement location="bin"/>
         <pathelement location="src/project_package/json-20190722.jar"/>
         <pathelement location="src/project_package/opencsv-4.1.jar"/>
     </path>
     <path id="run.CSVBuilder (1).classpath">
-        <path refid="Milestone1_Lasco.classpath"/>
+        <path refid="Deliverable1_Lasco.classpath"/>
+        <pathelement location="src/project_package/json-20190722.jar"/>
+        <pathelement location="src/project_package/opencsv-4.1.jar"/>
+    </path>
+    <path id="run.Utilities.classpath">
+        <path refid="Deliverable1_Lasco.classpath"/>
         <pathelement location="src/project_package/json-20190722.jar"/>
         <pathelement location="src/project_package/opencsv-4.1.jar"/>
     </path>
@@ -22,7 +27,6 @@
         <mkdir dir="bin"/>
         <copy includeemptydirs="false" todir="bin">
             <fileset dir="src">
-                <exclude name="**/*.launch"/>
                 <exclude name="**/*.java"/>
             </fileset>
         </copy>
@@ -37,7 +41,7 @@
         <echo message="${ant.project.name}: ${ant.file}"/>
         <javac debug="true" debuglevel="${debuglevel}" destdir="bin" includeantruntime="false" source="${source}" target="${target}">
             <src path="src"/>
-            <classpath refid="Milestone1_Lasco.classpath"/>
+            <classpath refid="Deliverable1_Lasco.classpath"/>
         </javac>
     </target>
     <target description="Build all projects which reference this project. Useful to propagate changes." name="build-refprojects"/>
@@ -57,6 +61,11 @@
     <target name="CSVBuilder (1)">
         <java classname="project_package.CSVBuilder" failonerror="true" fork="yes">
             <classpath refid="run.CSVBuilder (1).classpath"/>
+        </java>
+    </target>
+    <target name="Utilities">
+        <java classname="project_package.Utilities" failonerror="true" fork="yes">
+            <classpath refid="run.Utilities.classpath"/>
         </java>
     </target>
 </project>

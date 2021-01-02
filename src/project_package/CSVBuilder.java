@@ -1,15 +1,14 @@
 package project_package;
 
 import java.io.*;
+import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map.Entry;
 import java.util.TreeMap;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-
 import org.json.JSONException;
-
 import com.opencsv.CSVWriter;
 
 public class CSVBuilder {
@@ -40,6 +39,22 @@ public class CSVBuilder {
 			logger.log(Level.SEVERE, EXCEPTION_THROWN, e);
 		} 
 	}
+	
+	private List<String> getDatesBetween(String initialDate, String finalDate) {
+		String adj = "-01";
+		LocalDate startDate = LocalDate.parse(initialDate.substring(0,7) + adj);
+		LocalDate endDate = LocalDate.parse(finalDate.substring(0,7) + adj);
+		List<String> dates = new ArrayList<>();
+		dates.add(initialDate.substring(0,7));
+		LocalDate datePlus = startDate;
+		while(!datePlus.equals(endDate)) {
+			datePlus = datePlus.plusMonths(1);
+			String dateToAdd = datePlus.toString().substring(0,7);
+			dates.add(dateToAdd);
+		}
+		return dates;
+	}
+	
 	public static void main(String[] args) {
 		CSVBuilder csvbuild = new CSVBuilder();
 		RetrieveTicketsID rtvTkt = new RetrieveTicketsID();
@@ -50,13 +65,16 @@ public class CSVBuilder {
 		TreeMap<String,Integer> tktToDateMap = new TreeMap<>();
 		gitQuery.gitClone(path, repository);
 		gitQuery.gitPull(path, repository);
+		String firstDate = gitQuery.firstCommit(path);
+		String lastDate = gitQuery.lastCommit(path);
+		List<String> dates = csvbuild.getDatesBetween(firstDate, lastDate);
 		List<String> iDList = new ArrayList<>();
 		try {
-			iDList = rtvTkt.retrieveTicketsIDs();
+			iDList = rtvTkt.retrieveTicketsIDs();//retrieving the tickets IDs filtered
 		} catch (JSONException | IOException e) {
 			logger.log(Level.SEVERE, EXCEPTION_THROWN, e);
 		} 
-		for(String ID : iDList) {
+		for(String ID : iDList) {//for each IDs it retrieve the last commit date about it
 			String date = gitQuery.logFilter(path, ID);
 			String formattedDate = null;
 			if(date != null) {
@@ -69,10 +87,13 @@ public class CSVBuilder {
 				}
 			}
 		}
+		for(String date : dates) {
+			if(tktToDateMap.get(date) == null) {
+				tktToDateMap.put(date, 0);
+			}
+		}
 		File file = new File("result.csv");
-		FileWriter outputfile;
-		try {
-			outputfile = new FileWriter(file);
+		try (FileWriter outputfile = new FileWriter(file)){
 			CSVWriter writer = new CSVWriter(outputfile);
 			String[] header = {"Dates", "#Fixed tickets"};
 			writer.writeNext(header);

@@ -9,8 +9,6 @@ import java.net.URL;
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.List;
-
-import org.json.JSONException;
 import org.json.JSONObject;
 import org.json.JSONArray;
 
@@ -29,7 +27,7 @@ public class RetrieveTicketsID {
 	   }
 
 
-   public static JSONObject readJsonFromUrl(String url) throws IOException, JSONException {
+   public static JSONObject readJsonFromUrl(String url) throws IOException {
       InputStream is = new URL(url).openStream();
       try (
          BufferedReader rd = new BufferedReader(new InputStreamReader(is, StandardCharsets.UTF_8));
@@ -43,7 +41,7 @@ public class RetrieveTicketsID {
 
 
   
-	public List<String> retrieveTicketsIDs() throws IOException, JSONException {
+	public List<String> retrieveTicketsIDs() throws IOException {
 			   
 		String projName ="LIBCLOUD";
 		Integer j = 0;
